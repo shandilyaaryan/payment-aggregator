@@ -11,6 +11,7 @@ export interface ITransaction {
   status: PaymentStatus;
   gateway_transaction_id?: string;
   raw_gateway_response?: any;
+  callback_url: string;
 }
 
 export const transactionSchema = new Schema<ITransaction>(
@@ -56,6 +57,9 @@ export const transactionSchema = new Schema<ITransaction>(
     },
     raw_gateway_response: {
       type: Schema.Types.Mixed,
+    },
+    callback_url: {
+      type: String,
     },
   },
   { timestamps: true }

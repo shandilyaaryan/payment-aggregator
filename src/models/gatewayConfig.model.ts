@@ -4,7 +4,7 @@ import { PaymentGateway } from "../constants/payments.constants";
 export interface IGatewayConfig {
   gateway: PaymentGateway;
   base_url: string;
-  merchant_id?: string;
+  merchant_id: string;
   api_key?: string;
   secret_key?: string;
   use_proxy: boolean;

@@ -3,9 +3,9 @@ import type { PaymentGateway } from "../../constants/payments.constants";
 export interface CreatePaymentInput {
   amount: number;
   tradeId: string;
-  merchanTxnId: string;
+  merchantTxnId: string;
   currency: string;
-  callbackUrl?: string;
+  callbackUrl: string;
 }
 
 export interface PaymentCreationResult {

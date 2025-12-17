@@ -6,5 +6,4 @@ export enum PaymentStatus {
 
 export enum PaymentGateway {
   GLOBALPAY = "GLOBALPAY",
-  SMILEPAYZ = "SMILEPAYZ",
 }

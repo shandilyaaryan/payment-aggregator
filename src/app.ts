@@ -1,5 +1,5 @@
 import express from "express";
-import paymentRouter from "./routes/payment.route";
+import paymentRouter from "./routers/payment.route";
 
 export const app = express();
 

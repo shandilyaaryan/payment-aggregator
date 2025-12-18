@@ -1,9 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-export interface IMerchant {
+export interface IMerchant extends Document {
   name: string;
   merchant_id: string;
-  api_key: string;
+  api_key: string; // We should hash before saving it TODO
 }
 
 export const merchantSchema = new Schema<IMerchant>(

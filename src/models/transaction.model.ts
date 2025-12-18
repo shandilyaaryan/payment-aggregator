@@ -1,7 +1,7 @@
-import mongoose, { Schema, type Types } from "mongoose";
+import mongoose, { Document, Schema, type Types } from "mongoose";
 import { PaymentGateway, PaymentStatus } from "../constants/payments.constants";
 
-export interface ITransaction {
+export interface ITransaction extends Document {
   trade_id: string;
   merchant_transaction_id: string;
   merchant: Types.ObjectId;

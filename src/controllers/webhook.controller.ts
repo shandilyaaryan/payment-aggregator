@@ -11,7 +11,7 @@ export const handleWebhookController = async (req: Request, res: Response) => {
       });
     }
     const payload = req.body;
-    
+
     // According to GlobalPay PDF, the signature is part of the payload itself
     // as the 'sign' field. It's not a separate header.
     const signature = payload.sign;
@@ -30,7 +30,6 @@ export const handleWebhookController = async (req: Request, res: Response) => {
       error_code: "0000",
       message: "Success",
     });
-
   } catch (err: any) {
     console.error("Webhook Controller Error:", err.message);
     // GlobalPay webhook error response format (adjust as needed based on specific error codes)

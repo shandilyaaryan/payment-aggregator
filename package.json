@@ -1,10 +1,14 @@
 {
-  "name": "payment-aggregator",
+  "name": "test",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "start": "bun src/server.ts",
+    "dev": "bun --watch src/server.ts",
+    "seed": "bun src/scripts/seed.ts"
+  },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
     "@types/bun": "latest",
     "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.97",
@@ -14,8 +18,10 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/bcrypt": "^6.0.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "https-proxy-agent": "^7.0.6",
     "mongoose": "^9.0.1",

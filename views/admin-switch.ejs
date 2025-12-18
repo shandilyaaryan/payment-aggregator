@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Switch Gateway</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { margin-top: 0; }
+        .status-box { background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+        .status-active { color: green; font-weight: bold; }
+        select { padding: 8px; font-size: 16px; width: 100%; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Gateway Switcher</h1>
+
+        <% if (message) { %>
+            <div class="alert alert-success">
+                <%= message %>
+            </div>
+        <% } %>
+
+        <div class="status-box">
+            Current Active Gateway: <span class="status-active"><%= currentGateway %></span>
+        </div>
+
+        <form action="/admin/gateway/switch" method="POST">
+            <label for="gateway_name">Select Active Gateway:</label>
+            <select name="gateway_name" id="gateway_name">
+                <% availableGateways.forEach(function(gw) { %>
+                    <option value="<%= gw %>" <%= gw === currentGateway ? 'selected' : '' %>>
+                        <%= gw %>
+                    </option>
+                <% }); %>
+            </select>
+            <button type="submit">Switch Gateway</button>
+        </form>
+    </div>
+</body>
+</html>

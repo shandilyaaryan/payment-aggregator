@@ -16,8 +16,6 @@ export interface PaymentCreationResult {
 
 export interface IGatewayProvider {
   name: PaymentGateway;
-  createPayment(
-    input: CreatePaymentInput
-  ): Promise<PaymentCreationResult>;
+  createPayment(input: CreatePaymentInput): Promise<PaymentCreationResult>;
   verifySignature?(payload: any, signature: string): boolean;
 }

@@ -25,7 +25,7 @@ export class GlobalPayProvider implements IGatewayProvider {
     this.config = config;
   }
 
-  private generateSignature(params: Record<string, any>): string {
+  public generateSignature(params: Record<string, any>): string {
     // Get the keys and sort them
     const sortedKeys = Object.keys(params).sort();
 

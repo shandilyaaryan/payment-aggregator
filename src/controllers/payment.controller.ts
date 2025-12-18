@@ -41,7 +41,8 @@ export const getPaymentStatusHandler = async (req: Request, res: Response) => {
 
     const query: any = { merchant: merchant._id }; // Authorization: Only find txns for this merchant
     if (trade_id) query.trade_id = trade_id;
-    if (merchant_transaction_id) query.merchant_transaction_id = merchant_transaction_id;
+    if (merchant_transaction_id)
+      query.merchant_transaction_id = merchant_transaction_id;
 
     const transaction = await TransactionModel.findOne(query);
 
@@ -61,7 +62,6 @@ export const getPaymentStatusHandler = async (req: Request, res: Response) => {
       created_at: (transaction as any).createdAt,
       updated_at: (transaction as any).updatedAt,
     });
-
   } catch (err: any) {
     res.status(500).json({
       error: err.message || "Failed to fetch payment status",

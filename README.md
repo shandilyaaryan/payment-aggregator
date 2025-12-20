@@ -1,14 +1,18 @@
 # Payment Gateway Service
 
-A robust and scalable payment aggregation service built with **Bun**, **Express**, and **TypeScript**. This service provides a unified interface for merchants to process payments, currently featuring integration with **GlobalPay**.
+A robust and scalable payment aggregation service built with **Bun**, **Express**, and **TypeScript**. This service provides a unified interface for merchants to process payments, featuring a modular provider pattern currently integrated with **GlobalPay**.
 
 ## 🚀 Features
 
 - **High Performance:** Powered by [Bun](https://bun.sh/), a fast JavaScript runtime.
-- **Modular Architecture:** Designed with scalability in mind using the Provider pattern for easy addition of new payment gateways.
-- **MongoDB Integration:** Uses Mongoose for strongly-typed database interactions.
-- **Proxy Support:** Built-in support for proxy configurations (useful for specific gateway requirements).
-- **Admin Interface:** Basic EJS-based admin dashboard for configuration management.
+- **Modular Provider Pattern:** Interface-based architecture (`IGatewayProvider`) allowing easy addition of new payment gateways.
+- **Merchant Authentication:** Secure middleware ensures only authorized merchants can initiate transactions.
+- **Automated Webhooks:** 
+    -   Verifies signatures from upstream gateways (e.g., GlobalPay).
+    -   Updates local transaction status.
+    -   **Merchant Notification:** Automatically sends a POST request to the merchant's registered `callback_url` upon transaction completion.
+- **Admin Dashboard:** Basic UI for gateway configuration and debugging.
+- **Proxy Support:** Built-in configuration for gateways requiring upstream proxies.
 
 ## 🛠 Tech Stack
 
@@ -23,19 +27,22 @@ A robust and scalable payment aggregation service built with **Bun**, **Express*
 ```bash
 src/
 ├── config/         # Database and app configuration
-├── constants/      # Static constants (e.g., Payment Gateway enums)
+├── constants/      # Static constants (PaymentGateway, PaymentStatus enums)
 ├── controllers/    # Request handlers for Admin, Payment, and Webhooks
-├── middlewares/    # Express middlewares (e.g., Auth)
+├── middlewares/    # Express middlewares (Auth)
 ├── models/         # Mongoose schemas (Merchant, GatewayConfig, Transaction)
 ├── routers/        # API route definitions
-├── services/       # Business logic and Gateway Providers (GlobalPay)
+├── services/       # Core Business Logic
+│   ├── providers/  # Gateway implementations (GlobalPayProvider)
+│   ├── payment.service.ts # Payment creation orchestration
+│   └── webhook.service.ts # Async notification handling
 └── utils/          # Utility functions
 ```
 
 ## ⚙️ Configuration
 
 1.  **Environment Variables:**
-    Create a `.env` file in the root directory. You can reference `.env.example` (if available) or use the following template:
+    Create a `.env` file in the root directory.
 
     ```env
     PORT=3000
@@ -43,7 +50,7 @@ src/
     ```
 
 2.  **Database Connection:**
-    Ensure your MongoDB instance is running and accessible at the `MONGO_URI` specified.
+    Ensure your MongoDB instance is running and accessible at the `MONGO_URI`.
 
 ## 📦 Installation & Setup
 
@@ -58,15 +65,15 @@ src/
     bun install
     ```
 
-3.  **Seed the Database (Optional):**
-    To populate the database with initial data (like default merchants or configs):
+3.  **Seed the Database:**
+    Populate initial data (merchants, gateway configs):
     ```bash
     bun run seed
     ```
 
 ## 🏃‍♂️ Running the Application
 
--   **Development Mode (with hot reload):**
+-   **Development Mode (hot reload):**
     ```bash
     bun run dev
     ```
@@ -78,25 +85,39 @@ src/
 
 ## 🔌 API Endpoints
 
+### Merchant Payment API (`/api/merchant/payment`)
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/create` | Initiate a payment. Generates a unique `trade_id`. Returns the upstream `payment_url`. | Yes |
+| `GET` | `/status` | Check status using `trade_id` or `merchant_transaction_id`. | Yes |
+
+**Note:** The service currently defaults to `http://localhost:3000/webhook/payment/globalpay` as the upstream callback URL. Ensure this is reachable by the gateway or updated in `src/services/payment.service.ts` for production.
+
+### Webhooks (`/webhook`)
+
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `POST` | `/api/merchant/payment` | Initiate a payment request |
-| `POST` | `/webhook` | Handle async payment notifications |
-| `GET` | `/admin` | Access the Admin Dashboard |
-| `GET` | `/health-check` | Service health status |
+| `POST` | `/payment/:gateway_name` | Receives updates from gateways. Verifies signatures and updates transaction status. |
+
+### Admin Dashboard (`/admin`)
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/gateway/switch` | UI to view and switch active gateways. |
+| `POST` | `/debug/globalpay/sign` | Utility to debug GlobalPay MD5 signatures. |
 
 ## 🛡️ Payment Providers
 
-Currently, the service supports the following providers:
-
--   **GlobalPay:**
-    -   Implements MD5 signature generation and verification.
-    -   Supports upstream proxy tunneling.
+### GlobalPay
+-   **Implementation:** `src/services/providers/globalpay.provider.ts`
+-   **Security:** Validates MD5 signatures on all incoming webhooks.
+-   **Mapping:** Maps `payment_cl_id` from the gateway to the local `merchant_transaction_id`.
 
 ## 🤝 Contributing
 
 1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/amazing-feature`).
-3.  Commit your changes (`git commit -m 'Add amazing feature'`).
-4.  Push to the branch (`git push origin feature/amazing-feature`).
+2.  Create a feature branch.
+3.  Commit your changes.
+4.  Push to the branch.
 5.  Open a Pull Request.
